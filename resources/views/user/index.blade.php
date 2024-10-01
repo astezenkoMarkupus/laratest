@@ -8,14 +8,6 @@
             @foreach($user->orders as $order)
               <li>
                 {{ $order->status . ', total: ' . $order->total }}
-
-                {{--@if(count($order->products))
-                  <ol>
-                    @foreach($order->products as $product)
-                      <li>{{ $product->name }}</li>
-                    @endforeach
-                  </ol>
-                @endif--}}
               </li>
             @endforeach
           </ul>

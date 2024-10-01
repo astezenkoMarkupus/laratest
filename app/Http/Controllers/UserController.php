@@ -11,7 +11,7 @@ class UserController extends Controller
 {
     public function index(): View|Factory|Application
     {
-        $users = User::with('orders')->get();
+        $users = User::with(['orders'])->get();
 
         return view('user.index', ['users' => $users]);
     }
