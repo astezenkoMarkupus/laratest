@@ -16,6 +16,8 @@ class DatabaseSeeder extends Seeder
     {
         User::factory(100)->create();
         Product::factory(100)->create();
-        Order::factory(100)->create();
+        Order::factory(100)->create()->each(function (Order $order) {
+			$order->products()->attach([rand(1, 100), rand(1, 100)]);
+        });
     }
 }
