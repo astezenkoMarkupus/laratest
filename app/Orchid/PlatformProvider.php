@@ -34,6 +34,11 @@ class PlatformProvider extends OrchidServiceProvider
     public function menu(): array
     {
         return [
+	        Menu::make('Orders')
+	            ->icon('bag')
+	            ->route('platform.orders')
+	            ->title('My Dashboard'),
+
             Menu::make('Get Started')
                 ->icon('bs.book')
                 ->title('Navigation')
@@ -89,11 +94,6 @@ class PlatformProvider extends OrchidServiceProvider
                 ->url('https://github.com/orchidsoftware/platform/blob/master/CHANGELOG.md')
                 ->target('_blank')
                 ->badge(fn () => Dashboard::version(), Color::DARK),
-
-            Menu::make('Tasks')
-                ->icon('bag')
-                ->route('platform.task')
-                ->title('Tools')
         ];
     }
 
