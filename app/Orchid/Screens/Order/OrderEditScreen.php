@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Orchid\Screens;
+namespace App\Orchid\Screens\Order;
 
 use App\Models\Order;
 use Orchid\Screen\Action;
-use Orchid\Support\Facades\Layout;
 use Orchid\Screen\Screen;
+use Orchid\Support\Facades\Layout;
 
-class OrdersEditScreen extends Screen {
+class OrderEditScreen extends Screen {
 	public $order;
 
 	/**

@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Orchid\Screen\AsSource;
+use Orchid\Filters\Filterable;
 
 class Order extends Model
 {
-    use HasFactory, AsSource;
+    use HasFactory, AsSource, Filterable;
 
     public function user(): BelongsTo
     {

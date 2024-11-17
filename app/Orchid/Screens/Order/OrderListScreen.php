@@ -1,18 +1,20 @@
 <?php
 
-namespace App\Orchid\Screens;
+namespace App\Orchid\Screens\Order;
 
 use App\Models\Order;
-use App\Models\User;
+use App\Orchid\Filters\StatusFilter;
+use App\Orchid\Layouts\Order\OrderFiltersLayout;
+use Orchid\Screen\Action;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Link;
+use Orchid\Screen\Fields\Group;
 use Orchid\Screen\Screen;
 use Orchid\Screen\TD;
 use Orchid\Support\Color;
 use Orchid\Support\Facades\Layout;
-use Orchid\Screen\Fields\Group;
 
-class OrdersScreen extends Screen {
+class OrderListScreen extends Screen {
 	/**
 	 * Fetch data to be displayed on the screen.
 	 *
@@ -20,7 +22,9 @@ class OrdersScreen extends Screen {
 	 */
 	public function query(): iterable {
 		return [
-			'orders' => Order::orderBy( 'id', 'DESC' )->paginate( 20 ),
+			'orders' => Order::with( 'user' )
+				->filters([StatusFilter::class])
+				->paginate( 20 ),
 		];
 	}
 
@@ -36,7 +40,7 @@ class OrdersScreen extends Screen {
 	/**
 	 * The screen's action buttons.
 	 *
-	 * @return \Orchid\Screen\Action[]
+	 * @return Action[]
 	 */
 	public function commandBar(): iterable {
 		return [];
@@ -49,19 +53,16 @@ class OrdersScreen extends Screen {
 	 */
 	public function layout(): iterable {
 		return [
+			OrderFiltersLayout::class,
+
 			Layout::table( 'orders', [
 				TD::make( 'id', '#' )->style( 'background-color: #dbdbdb' ),
 				TD::make( 'user_id', 'Customer' )->render( function ( Order $order ) {
-					$user = User::find( $order->user_id );
+					$user = $order->user;
 
 					return Link::make( $user->name )->route( 'platform.systems.users.edit', $user );
 				} ),
-				TD::make( 'status' )->filter( TD::FILTER_SELECT, [
-					'pending'   => 'Pending',
-					'cancelled' => 'Cancelled',
-					'failed'    => 'Failed',
-					'completed' => 'Completed',
-				] ),
+				TD::make( 'status' ),
 				TD::make( 'total', 'Total ($)' ),
 				TD::make( 'created_at', 'Date Created' )->render( function ( Order $order ) {
 					return date( 'j F Y', strtotime( $order->created_at ) );
@@ -89,5 +90,4 @@ class OrdersScreen extends Screen {
 	public function delete( Order $order ): void {
 		$order->delete();
 	}
-
 }
