@@ -8,11 +8,13 @@ use App\Orchid\Layouts\Order\OrderFiltersLayout;
 use Orchid\Screen\Action;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Link;
+use Orchid\Screen\Components\Cells\DateTimeSplit;
 use Orchid\Screen\Fields\Group;
 use Orchid\Screen\Screen;
 use Orchid\Screen\TD;
 use Orchid\Support\Color;
 use Orchid\Support\Facades\Layout;
+use ReflectionException;
 
 class OrderListScreen extends Screen {
 	/**
@@ -50,29 +52,40 @@ class OrderListScreen extends Screen {
 	 * The screen's layout elements.
 	 *
 	 * @return \Orchid\Screen\Layout[]|string[]
+	 * @throws ReflectionException
 	 */
 	public function layout(): iterable {
 		return [
 			OrderFiltersLayout::class,
 
 			Layout::table( 'orders', [
-				TD::make( 'id', '#' )->style( 'background-color: #dbdbdb' ),
-				TD::make( 'user_id', 'Customer' )->render( function ( Order $order ) {
-					$user = $order->user;
+				TD::make( 'id', '#' )
+					->filter( TD::FILTER_NUMBER_RANGE )
+					->style( 'background-color: #dbdbdb' ),
 
-					return Link::make( $user->name )->route( 'platform.systems.users.edit', $user );
-				} ),
-				TD::make( 'status' ),
-				TD::make( 'total', 'Total ($)' ),
-				TD::make( 'created_at', 'Date Created' )->render( function ( Order $order ) {
-					return date( 'j F Y', strtotime( $order->created_at ) );
-				} ),
+				TD::make( 'user_id', 'Customer' )
+					->render( function ( Order $order ) {
+						$user = $order->user;
+
+						return Link::make( $user->name . " (ID: $user->id)" )
+							->route( 'platform.systems.users.edit', $user );
+					} )
+					->filter( TD::FILTER_NUMERIC ),
+
+				TD::make( 'status' )->filter(),
+
+				TD::make( 'total', 'Total ($)' )->filter( TD::FILTER_NUMBER_RANGE ),
+
+				TD::make( 'created_at', 'Date Created' )
+					->usingComponent( DateTimeSplit::class )
+					->filter( TD::FILTER_DATE_RANGE ),
+
 				TD::make( 'Actions' )->render( fn( $order ) => Group::make( [
-					Link::make( 'Edit' )
+					Link::make()
 					    ->type( Color::LINK )
 					    ->icon( 'pencil' )
 					    ->route( 'platform.orders.edit', $order ),
-					Button::make( 'Delete Order' )
+					Button::make()
 					      ->type( Color::DANGER )
 					      ->icon( 'trash' )
 					      ->confirm( 'After deleting, the order will be gone forever.' )
