@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\OrderStatuses;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -14,9 +15,10 @@ return new class extends Migration {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->string('status')->default('pending');
+            $table->foreignIdFor( OrderStatuses::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->float('total')->default(0);
             $table->timestamps();
+			$table->integer('thumbnail')->default(0);
         });
     }
 

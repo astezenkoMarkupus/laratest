@@ -20,7 +20,7 @@ class OrderFactory extends Factory
     {
         return [
             'user_id' => fake()->numberBetween(1, User::all()->count()),
-            'status'  => fake()->randomElement(['pending', 'completed', 'cancelled', 'failed']),
+            'order_statuses_id' => fake()->numberBetween(1, 5),
             'total'   => $this->faker->randomFloat(2, 100, 1000),
         ];
     }

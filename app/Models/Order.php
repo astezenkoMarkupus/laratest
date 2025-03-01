@@ -12,9 +12,10 @@ use Orchid\Filters\Types\WhereBetween;
 use Orchid\Filters\Types\WhereDateStartEnd;
 use Orchid\Screen\AsSource;
 use Orchid\Filters\Filterable;
+use Orchid\Attachment\Attachable;
 
 class Order extends Model {
-	use HasFactory, AsSource, Filterable;
+	use HasFactory, AsSource, Filterable, Attachable;
 
 	protected array $allowedFilters = [
 		'id'         => WhereBetween::class,
@@ -30,5 +31,9 @@ class Order extends Model {
 
 	public function products(): BelongsToMany {
 		return $this->belongsToMany( Product::class );
+	}
+
+	public function status(): BelongsTo {
+		return $this->belongsTo(OrderStatuses::class);
 	}
 }
