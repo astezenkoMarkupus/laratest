@@ -35,7 +35,7 @@ class PlatformProvider extends OrchidServiceProvider
     {
         return [
 	        Menu::make('Orders')
-	            ->icon('bag')
+	            ->icon('bs.bag')
 	            ->route('platform.orders')
 	            ->title('My Dashboard'),
 

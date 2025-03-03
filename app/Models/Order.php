@@ -25,6 +25,11 @@ class Order extends Model {
 		'created_at' => WhereDateStartEnd::class,
 	];
 
+	protected $fillable = [
+		'thumbnail',
+		'order_statuses_id'
+	];
+
 	public function user(): BelongsTo {
 		return $this->belongsTo( User::class );
 	}

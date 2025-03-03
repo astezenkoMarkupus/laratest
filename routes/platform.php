@@ -52,8 +52,12 @@ Route::screen( 'users/create', UserEditScreen::class )->name( 'platform.systems.
 ) => $trail->parent( 'platform.systems.users' )->push( __( 'Create' ), route( 'platform.systems.users.create' ) ) );
 
 // Platform > System > Users
-Route::screen( 'users', UserListScreen::class )->name( 'platform.systems.users' )->breadcrumbs( fn( Trail $trail
-) => $trail->parent( 'platform.index' )->push( __( 'Users' ), route( 'platform.systems.users' ) ) );
+Route::screen( 'users', UserListScreen::class )
+	->name( 'platform.systems.users' )
+	->breadcrumbs(
+		fn( Trail $trail ) => $trail->parent( 'platform.index' )
+		                            ->push( __( 'Users' ), route( 'platform.systems.users' ) )
+	);
 
 // Platform > System > Roles > Role
 Route::screen( 'roles/{role}/edit', RoleEditScreen::class )->name( 'platform.systems.roles.edit' )->breadcrumbs( fn(
@@ -89,9 +93,11 @@ Route::screen( '/examples/cards', ExampleCardsScreen::class )->name( 'platform.e
 Route::screen( 'orders', OrderListScreen::class )->name( 'platform.orders' )->breadcrumbs( function ( Trail $trail ) {
 	return $trail->parent( 'platform.index' )->push( 'Orders', route( 'platform.orders' ) );
 } );
-Route::screen( 'orders/{order}/edit', OrderEditScreen::class )->name( 'platform.orders.edit' )->breadcrumbs( function (
-	Trail $trail,
-	$order
-) {
-	return $trail->parent( 'platform.orders' )->push( "Order #$order" );
-} );
+
+Route::screen( 'orders/{order}/edit', OrderEditScreen::class )
+	->name( 'platform.orders.edit' )
+	->breadcrumbs(
+		fn( Trail $trail, $order ) => $trail
+			->parent( 'platform.orders' )
+			->push( "#$order", route( 'platform.orders.edit', $order ) )
+	);
