@@ -70,7 +70,6 @@ class OrderEditScreen extends Screen {
 				Layout::rows([
 					Select::make('order.order_statuses_id')
 					       ->options(array_map(fn($status) => ucfirst($status), OrderStatuses::statuses()))
-					       ->targetId()
 					       ->title('Status')
 
 				])
