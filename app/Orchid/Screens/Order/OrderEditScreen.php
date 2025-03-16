@@ -10,9 +10,11 @@ use Orchid\Screen\Action;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Fields\Picture;
 use Orchid\Screen\Fields\Select;
+use Orchid\Screen\Fields\Upload;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Layout;
 use Orchid\Support\Facades\Alert;
+use Orchid\Attachment\File;
 
 class OrderEditScreen extends Screen {
 	public $order;
@@ -46,10 +48,11 @@ class OrderEditScreen extends Screen {
 		return [
 			Button::make('Update')
 			      ->icon('note')
-			      ->method('createOrUpdate'),
+			      ->method('save'),
 
 			Button::make('Remove')
 			      ->icon('trash')
+			      ->confirm( 'After deleting, the order will be gone forever.' )
 			      ->method('remove')
 		];
 	}
@@ -67,6 +70,7 @@ class OrderEditScreen extends Screen {
 					       ->targetId()
 					       ->title('Thumbnail')
 				]),
+
 				Layout::rows([
 					Select::make('order.order_statuses_id')
 					       ->options(array_map(fn($status) => ucfirst($status), OrderStatuses::statuses()))
@@ -74,14 +78,20 @@ class OrderEditScreen extends Screen {
 
 				])
 			]),
+
+			Layout::columns([
+				Layout::rows([
+					Upload::make( 'order.attachment.' )
+					      ->title( 'Documents' )
+					      ->acceptedFiles( 'application/pdf' )
+					      ->maxFiles( 3 )
+					      ->maxFileSize( 10 )
+					      ->storage( 'public' )
+					      ->parallelUploads(3)
+					      ->groups('documents')
+				])
+			])
 		];
-	}
-
-	public function createOrUpdate(Order $order, Request $request): RedirectResponse {
-		$order->fill($request->get('order'));
-		$order->save();
-
-		return redirect()->route('platform.orders');
 	}
 
 	public function remove(Order $order): RedirectResponse {
@@ -98,16 +108,14 @@ class OrderEditScreen extends Screen {
 	 *
 	 * @return RedirectResponse
 	 */
-	public function save(Request $request): RedirectResponse {
-		/*$request->validate([
-			'order.thumbnail' => [
-				'required',
-			],
-		]);*/
+	public function save(Order $order, Request $request): RedirectResponse {
+		$order->fill($request->get('order'));
+		$order->save();
 
-		/*$order->fill($request->get('order'));
-		$order->save();*/
+		if ( $docs = $request->input('order.attachment') ) {
+			$order->attachments()->sync( array_map( fn ( $doc ) => $doc[0], $docs ) );
+		}
 
-		return redirect()->route('platform.systems.orders');
+		return redirect()->route('platform.orders');
 	}
 }
