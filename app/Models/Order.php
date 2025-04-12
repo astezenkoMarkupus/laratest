@@ -13,7 +13,6 @@ use Orchid\Filters\Types\WhereDateStartEnd;
 use Orchid\Screen\AsSource;
 use Orchid\Filters\Filterable;
 use Orchid\Attachment\Attachable;
-use Orchid\Attachment\Models\Attachment;
 
 class Order extends Model {
 	use HasFactory, AsSource, Filterable, Attachable;
@@ -41,7 +40,7 @@ class Order extends Model {
 	}
 
 	public function status(): BelongsTo {
-		return $this->belongsTo(OrderStatuses::class);
+		return $this->belongsTo(OrderStatuses::class, 'order_statuses_id', 'id');
 	}
 
 	public function documents() {
