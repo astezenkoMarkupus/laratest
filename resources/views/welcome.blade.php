@@ -1,3 +1,3 @@
 <x-layout>
-  Hello!
+    <livewire:counter />
 </x-layout>
